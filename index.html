@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+  <title>Consulta CEP - Brasil API</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    rel="stylesheet">
+
+  <style>
+    /* Estilos CSS incorporados */
+    body {
+      background-color: #f8f9fa;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    #result {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h1 class="text-center">Consulta de CEP - Brasil API</h1>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <form id="cep-form">
+          <div class="form-group">
+            <label for="cep">Digite o CEP:</label>
+            <input type="text"
+              id="cep"
+              class="form-control"
+              placeholder="Ex: 01001000"
+              maxlength="8">
+          </div>
+          <button type="submit"
+            class="btn btn-primary btn-block">Consultar</button>
+        </form>
+        <div id="result"
+          class="mt-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS e JQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    // JavaScript incorporado
+    document.getElementById('cep-form').addEventListener('submit', function (e) {
+      e.preventDefault(); // Evitar recarregar a página ao enviar o formulário
+
+      const cep = document.getElementById('cep').value;
+
+      if (cep.length === 8) {
+        fetch(`https://brasilapi.com.br/api/cep/v1/${cep}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.cep) {
+              document.getElementById('result').innerHTML = `
+                                <h5>Resultado para o CEP ${data.cep}:</h5>
+                                <p><strong>Rua:</strong> ${data.street}</p>
+                                <p><strong>Bairro:</strong> ${data.neighborhood}</p>
+                                <p><strong>Cidade:</strong> ${data.city}</p>
+                                <p><strong>Estado:</strong> ${data.state}</p>
+                            `;
+            } else {
+              document.getElementById('result').innerHTML = `<p>CEP não encontrado.</p>`;
+            }
+          })
+          .catch(error => {
+            console.error('Erro:', error);
+            document.getElementById('result').innerHTML = `<p>Ocorreu um erro ao buscar o CEP.</p>`;
+          });
+      } else {
+        document.getElementById('result').innerHTML = `<p>Por favor, insira um CEP válido com 8 dígitos.</p>`;
+      }
+    });
+  </script>
+</body>
+
+</html>
